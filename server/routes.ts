@@ -5,7 +5,7 @@ import { api } from "@shared/routes";
 import { z } from "zod";
 import Anthropic from "@anthropic-ai/sdk";
 
-// Initialize Anthropic (Replit Integration)
+// Initialize Anthropic
 const anthropic = new Anthropic({
   apiKey: process.env.AI_INTEGRATIONS_ANTHROPIC_API_KEY || "dummy",
   baseURL: process.env.AI_INTEGRATIONS_ANTHROPIC_BASE_URL,

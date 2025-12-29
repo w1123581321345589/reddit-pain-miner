@@ -15,7 +15,7 @@ A full-stack web application that mines Reddit for startup opportunities by anal
 - **Frontend**: React + TypeScript, TailwindCSS, Shadcn UI, Recharts
 - **Backend**: Express.js + TypeScript
 - **Database**: PostgreSQL with Drizzle ORM
-- **AI**: Anthropic Claude (via Replit AI Integrations)
+- **AI**: Anthropic Claude
 
 ## Getting Started
 
