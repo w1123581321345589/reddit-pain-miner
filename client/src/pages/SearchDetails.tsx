@@ -1,7 +1,7 @@
 import { Layout } from "@/components/Layout";
 import { useSearch } from "@/hooks/use-searches";
 import { useRoute } from "wouter";
-import { Loader2, AlertCircle, ArrowLeft } from "lucide-react";
+import { Loader2, AlertCircle, ArrowLeft, Zap } from "lucide-react";
 import { Link } from "wouter";
 import { PainScoreChart } from "@/components/PainScoreChart";
 import { OpportunityCard } from "@/components/OpportunityCard";
@@ -21,7 +21,7 @@ export default function SearchDetails() {
         <div className="h-[70vh] flex flex-col items-center justify-center">
           <Loader2 className="w-12 h-12 text-primary animate-spin mb-4" />
           <h2 className="text-xl font-display font-bold">Analyzing Reddit Data...</h2>
-          <p className="text-muted-foreground mt-2">This usually takes 10-20 seconds.</p>
+          <p className="text-muted-foreground mt-2">This usually takes 10–20 seconds.</p>
         </div>
       </Layout>
     );
@@ -43,10 +43,11 @@ export default function SearchDetails() {
   const posts = search.posts || [];
   const opportunities = search.opportunities || [];
 
-  const sortedPosts = [...posts].sort((a, b) => {
-    if (postSort === "pain") return b.painScore - a.painScore;
-    return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-  });
+  const sortedPosts = [...posts].sort((a, b) =>
+    postSort === "pain"
+      ? b.painScore - a.painScore
+      : new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+  );
 
   return (
     <Layout>
@@ -54,7 +55,7 @@ export default function SearchDetails() {
         <Link href="/" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground mb-4 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </Link>
-        
+
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <h1 className="text-3xl font-display font-bold mb-2 text-foreground">
@@ -67,11 +68,11 @@ export default function SearchDetails() {
               ))}
             </div>
           </div>
-          
+
           <div className={cn(
             "px-4 py-2 rounded-lg font-bold uppercase tracking-wider text-sm",
-            search.status === "completed" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" : 
-            search.status === "pending" ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" :
+            search.status === "completed" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" :
+            search.status === "pending"   ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400" :
             "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
           )}>
             Status: {search.status}
@@ -84,29 +85,23 @@ export default function SearchDetails() {
           <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto mb-6" />
           <h3 className="text-xl font-bold font-display mb-2">Mining in Progress</h3>
           <p className="text-muted-foreground max-w-md mx-auto">
-            We are currently fetching posts, analyzing sentiment, and identifying pain points. 
-            The results will appear here automatically.
+            Fetching posts, scoring pain signals, and running AI analysis. Results will appear here automatically.
           </p>
         </div>
       ) : (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-          
-          {/* Summary Section */}
           {search.summary && (
             <section className="bg-gradient-to-br from-primary/5 to-accent/5 border border-border rounded-2xl p-6 md:p-8">
               <h2 className="text-xl font-display font-bold mb-4 text-primary">AI Analysis Summary</h2>
-              <div className="prose dark:prose-invert max-w-none text-foreground/90">
-                <p>{search.summary}</p>
-              </div>
+              <p className="text-foreground/90 leading-relaxed">{search.summary}</p>
             </section>
           )}
 
-          {/* Opportunities Section */}
           {opportunities.length > 0 && (
             <section>
               <h2 className="text-2xl font-display font-bold mb-6 flex items-center">
                 <span className="bg-accent/10 text-accent p-2 rounded-lg mr-3">
-                  <Loader2 className="w-6 h-6 animate-spin-slow" /> {/* Just a visual icon, not spinning usually but reusing for style */}
+                  <Zap className="w-6 h-6" />
                 </span>
                 Identified Opportunities
               </h2>
@@ -118,14 +113,12 @@ export default function SearchDetails() {
             </section>
           )}
 
-          {/* Posts & Chart Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column: Posts List */}
             <div className="lg:col-span-2 space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-display font-bold">Raw Pain Data</h2>
                 <div className="flex space-x-1 bg-secondary p-1 rounded-lg">
-                  <button 
+                  <button
                     onClick={() => setPostSort("pain")}
                     className={cn(
                       "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
@@ -134,7 +127,7 @@ export default function SearchDetails() {
                   >
                     High Pain
                   </button>
-                  <button 
+                  <button
                     onClick={() => setPostSort("newest")}
                     className={cn(
                       "px-3 py-1.5 rounded-md text-sm font-medium transition-all",
@@ -151,39 +144,38 @@ export default function SearchDetails() {
                   <PostCard key={post.id} post={post} />
                 ))}
                 {sortedPosts.length === 0 && (
-                  <p className="text-muted-foreground text-center py-8">No high-pain posts found.</p>
+                  <p className="text-muted-foreground text-center py-8">No posts found for this search.</p>
                 )}
               </div>
             </div>
 
-            {/* Right Column: Chart & Stats */}
             <div className="space-y-6">
-               <div className="sticky top-6">
+              <div className="sticky top-6">
                 <h2 className="text-lg font-display font-bold mb-4">Pain Distribution</h2>
                 <PainScoreChart posts={posts} />
-                
+
                 <div className="mt-6 bg-card border border-border rounded-2xl p-6">
-                   <h3 className="font-bold text-lg mb-4 font-display">Data Stats</h3>
-                   <div className="space-y-3">
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Total Analyzed</span>
-                        <span className="font-bold">{posts.length}</span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">High Pain Posts</span>
-                        <span className="font-bold text-accent">
-                          {posts.filter(p => p.painScore > 70).length}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-sm">
-                        <span className="text-muted-foreground">Avg Pain Score</span>
-                        <span className="font-bold">
-                          {Math.round(posts.reduce((acc, p) => acc + p.painScore, 0) / (posts.length || 1))}
-                        </span>
-                      </div>
-                   </div>
+                  <h3 className="font-bold text-lg mb-4 font-display">Data Stats</h3>
+                  <div className="space-y-3">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Total Analyzed</span>
+                      <span className="font-bold">{posts.length}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">High Pain Posts</span>
+                      <span className="font-bold text-accent">
+                        {posts.filter(p => p.painScore > 7).length}
+                      </span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Avg Pain Score</span>
+                      <span className="font-bold">
+                        {Math.round(posts.reduce((acc, p) => acc + p.painScore, 0) / (posts.length || 1))}
+                      </span>
+                    </div>
+                  </div>
                 </div>
-               </div>
+              </div>
             </div>
           </div>
         </div>

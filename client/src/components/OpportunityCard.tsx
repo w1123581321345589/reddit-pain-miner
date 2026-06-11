@@ -1,5 +1,5 @@
 import { type Opportunity } from "@shared/schema";
-import { ArrowUpRight, Target, Coins, TrendingUp } from "lucide-react";
+import { Target, Coins, TrendingUp } from "lucide-react";
 
 interface OpportunityCardProps {
   opportunity: Opportunity;
@@ -8,14 +8,13 @@ interface OpportunityCardProps {
 export function OpportunityCard({ opportunity }: OpportunityCardProps) {
   return (
     <div className="group bg-card hover:bg-card/80 border border-border hover:border-primary/50 transition-all duration-300 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 relative overflow-hidden">
-      {/* Decorative gradient blob */}
       <div className="absolute -top-10 -right-10 w-24 h-24 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-all" />
 
       <div className="flex justify-between items-start mb-4 relative z-10">
         <h3 className="font-display font-bold text-xl text-foreground pr-8 leading-tight">
           {opportunity.name}
         </h3>
-        <div className="bg-primary/10 text-primary font-bold px-3 py-1 rounded-full text-sm">
+        <div className="bg-primary/10 text-primary font-bold px-3 py-1 rounded-full text-sm shrink-0">
           {opportunity.confidence}% Match
         </div>
       </div>
@@ -47,9 +46,7 @@ export function OpportunityCard({ opportunity }: OpportunityCardProps) {
             <TrendingUp className="w-4 h-4 text-primary" />
             <span className="text-xs font-bold text-primary uppercase">Validation Test</span>
           </div>
-          <p className="text-sm text-foreground/80 italic">
-            "{opportunity.validationTest}"
-          </p>
+          <p className="text-sm text-foreground/80 italic">"{opportunity.validationTest}"</p>
         </div>
       )}
     </div>

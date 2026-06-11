@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -7,7 +7,7 @@ export const searches = pgTable("searches", {
   query: text("query").notNull(),
   subreddits: text("subreddits").array().notNull(),
   status: text("status", { enum: ["pending", "completed", "failed"] }).default("pending").notNull(),
-  summary: text("summary"), // AI Summary
+  summary: text("summary"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
@@ -22,9 +22,8 @@ export const posts = pgTable("posts", {
   numComments: integer("num_comments").notNull(),
   url: text("url").notNull(),
   painScore: integer("pain_score").notNull(),
-  // JSONB for flexible signals storage if needed, but painScore is main one
-  signals: jsonb("signals"), 
-  createdAt: timestamp("created_at").notNull(), // Reddit creation time
+  signals: jsonb("signals"),
+  createdAt: timestamp("created_at").notNull(),
 });
 
 export const opportunities = pgTable("opportunities", {
@@ -36,30 +35,26 @@ export const opportunities = pgTable("opportunities", {
   pricing: text("pricing").notNull(),
   confidence: integer("confidence").notNull(),
   validationTest: text("validation_test"),
-  description: text("description"), // Full description or extra details
+  description: text("description"),
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// schemas
-export const insertSearchSchema = createInsertSchema(searches).omit({ 
-  id: true, 
-  createdAt: true, 
-  status: true, 
-  summary: true 
+export const insertSearchSchema = createInsertSchema(searches).omit({
+  id: true,
+  createdAt: true,
+  status: true,
+  summary: true,
 });
 export const insertPostSchema = createInsertSchema(posts).omit({ id: true });
 export const insertOpportunitySchema = createInsertSchema(opportunities).omit({ id: true, createdAt: true });
 
-// types
 export type Search = typeof searches.$inferSelect;
 export type InsertSearch = z.infer<typeof insertSearchSchema>;
 export type Post = typeof posts.$inferSelect;
 export type Opportunity = typeof opportunities.$inferSelect;
 
-// Request types
 export type CreateSearchRequest = InsertSearch;
 
-// API Response types
 export type SearchWithResults = Search & {
   posts?: Post[];
   opportunities?: Opportunity[];

@@ -8,11 +8,15 @@ import { insertSearchSchema, type InsertSearch } from "@shared/schema";
 import { z } from "zod";
 import { Loader2, Search, X, Plus } from "lucide-react";
 
-// Schema for the form specifically (handling array as comma string for easier input if needed, but lets use chips)
 const formSchema = insertSearchSchema.extend({
-  // Override subreddits to be string array for validation
   subreddits: z.array(z.string()).min(1, "At least one subreddit is required"),
 });
+
+const PRESETS = [
+  { name: "SaaS Gaps",   query: "frustrated OR 'how do I' OR 'looking for tool'", subs: ["SaaS", "Entrepreneur", "startups"] },
+  { name: "SMB Finance", query: "payroll OR accounting OR 'too expensive'",        subs: ["smallbusiness", "accounting", "bookkeeping"] },
+  { name: "Dev Tools",   query: "slow OR buggy OR 'hate configured'",              subs: ["webdev", "devops", "programming"] },
+];
 
 export default function NewSearch() {
   const [, setLocation] = useLocation();
@@ -32,40 +36,27 @@ export default function NewSearch() {
 
   const onSubmit = (data: InsertSearch) => {
     mutate(data, {
-      onSuccess: (newSearch) => {
-        setLocation(`/searches/${newSearch.id}`);
-      },
+      onSuccess: (newSearch) => setLocation(`/searches/${newSearch.id}`),
     });
   };
 
   const addSubreddit = () => {
-    const cleanSub = subredditInput.trim().replace(/^r\//, '');
-    if (cleanSub && !subreddits.includes(cleanSub)) {
-      form.setValue("subreddits", [...subreddits, cleanSub]);
+    const sub = subredditInput.trim().replace(/^r\//, "");
+    if (sub && !subreddits.includes(sub)) {
+      form.setValue("subreddits", [...subreddits, sub]);
       setSubredditInput("");
     }
   };
 
-  const removeSubreddit = (subToRemove: string) => {
-    form.setValue("subreddits", subreddits.filter(s => s !== subToRemove));
+  const removeSubreddit = (sub: string) => {
+    form.setValue("subreddits", subreddits.filter(s => s !== sub));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       e.preventDefault();
       addSubreddit();
     }
-  };
-
-  const PRESETS = [
-    { name: "SaaS Gaps", query: "frustrated OR 'how do I' OR 'looking for tool'", subs: ["SaaS", "Entrepreneur", "startups"] },
-    { name: "SMB Finance", query: "payroll OR accounting OR 'too expensive'", subs: ["smallbusiness", "accounting", "bookkeeping"] },
-    { name: "Dev Tools", query: "slow OR buggy OR 'hate configured'", subs: ["webdev", "devops", "programming"] },
-  ];
-
-  const applyPreset = (preset: typeof PRESETS[0]) => {
-    form.setValue("query", preset.query);
-    form.setValue("subreddits", preset.subs);
   };
 
   return (
@@ -78,8 +69,6 @@ export default function NewSearch() {
 
         <div className="bg-card border border-border rounded-2xl p-6 md:p-8 shadow-sm">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            
-            {/* Query Input */}
             <div className="space-y-2">
               <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Search Keywords</label>
               <div className="relative">
@@ -95,7 +84,6 @@ export default function NewSearch() {
               )}
             </div>
 
-            {/* Subreddits Input */}
             <div className="space-y-2">
               <label className="text-sm font-bold uppercase tracking-wider text-muted-foreground">Target Subreddits</label>
               <div className="flex space-x-2">
@@ -114,7 +102,7 @@ export default function NewSearch() {
                   <Plus className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="flex flex-wrap gap-2 mt-3">
                 {subreddits.map(sub => (
                   <span key={sub} className="inline-flex items-center px-3 py-1.5 rounded-lg text-sm font-medium bg-primary/10 text-primary border border-primary/20 animate-in zoom-in duration-200">
@@ -128,12 +116,11 @@ export default function NewSearch() {
                   <span className="text-sm text-muted-foreground italic">No subreddits added yet.</span>
                 )}
               </div>
-               {form.formState.errors.subreddits && (
+              {form.formState.errors.subreddits && (
                 <p className="text-destructive text-sm">{form.formState.errors.subreddits.message}</p>
               )}
             </div>
 
-            {/* Presets */}
             <div className="pt-4 border-t border-border">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground block mb-3">Or choose a preset:</label>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -141,7 +128,10 @@ export default function NewSearch() {
                   <button
                     key={preset.name}
                     type="button"
-                    onClick={() => applyPreset(preset)}
+                    onClick={() => {
+                      form.setValue("query", preset.query);
+                      form.setValue("subreddits", preset.subs);
+                    }}
                     className="text-left px-4 py-3 rounded-xl border border-border hover:border-primary/50 hover:bg-primary/5 transition-all text-sm font-medium"
                   >
                     <div className="font-bold text-foreground mb-1">{preset.name}</div>
@@ -151,7 +141,6 @@ export default function NewSearch() {
               </div>
             </div>
 
-            {/* Submit Button */}
             <button
               type="submit"
               disabled={isPending}

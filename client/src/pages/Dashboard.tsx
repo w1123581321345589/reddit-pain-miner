@@ -4,6 +4,7 @@ import { useOpportunities } from "@/hooks/use-opportunities";
 import { Link } from "wouter";
 import { Plus, Search as SearchIcon, ArrowRight, Loader2, TrendingUp } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 export default function Dashboard() {
   const { data: searches, isLoading: searchesLoading } = useSearches();
@@ -11,10 +12,8 @@ export default function Dashboard() {
 
   const isLoading = searchesLoading || opportunitiesLoading;
 
-  // Calculate simple stats
   const totalSearches = searches?.length || 0;
   const totalOpportunities = opportunities?.length || 0;
-  const pendingSearches = searches?.filter(s => s.status === 'pending').length || 0;
 
   return (
     <Layout>
@@ -27,7 +26,6 @@ export default function Dashboard() {
         </p>
       </div>
 
-      {/* Stats Row */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
         <div className="bg-card border border-border p-6 rounded-2xl shadow-sm flex flex-col justify-between h-32">
           <div className="flex justify-between items-start">
@@ -51,7 +49,6 @@ export default function Dashboard() {
         </Link>
       </div>
 
-      {/* Recent Searches Table */}
       <div className="bg-card rounded-2xl border border-border shadow-sm overflow-hidden">
         <div className="p-6 border-b border-border flex justify-between items-center">
           <h2 className="text-xl font-bold font-display">Recent Operations</h2>
@@ -102,15 +99,15 @@ export default function Dashboard() {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={cn(
                         "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium",
-                        search.status === 'completed' ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" :
-                        search.status === 'failed' ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400" :
+                        search.status === "completed" ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400" :
+                        search.status === "failed" ? "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400" :
                         "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
                       )}>
                         {search.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
-                      {search.createdAt && format(new Date(search.createdAt), 'MMM d, yyyy')}
+                      {search.createdAt && format(new Date(search.createdAt), "MMM d, yyyy")}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link href={`/searches/${search.id}`} className="text-primary hover:text-primary/80 flex items-center justify-end">
